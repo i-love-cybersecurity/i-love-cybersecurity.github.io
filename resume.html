@@ -1,0 +1,446 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!--
+		++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		+DEVELOPER:   Shaun Christian
+		+DATE:	      May 23, 2017, July 24, 2019.
+		+DESCRIPTION: This website is an html version of my resume.
+		+             It's more flexible than the alternatives.
+		++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		-->
+		<!--Please excuse the mess-->
+		<meta charset="utf-8"/>
+		<meta name="description" content="Shaun C. Christian. Aspiring Cyber Security Associate. Security Analyst. Shoe string startups." />
+		<meta name="keywords" content="Shaun, Shaun Christian, Shaun C., Shaun C. Christian, Shaun Christian Resume, Cyber security associate. Web designer, Tech Support, Technologist" />
+
+		<!--<link rel="stylesheet" href="styles.css">-->
+		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+		<!-- Latest compiled and minified CSS -->
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+                <!-- Latest compiled and minified JavaScript -->
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"> </script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<title>
+			Shaun Christian
+		</title>
+		<style>
+			html{}
+			#root{font-family:Arial !important;}
+			body
+			{
+				font-family: Arial, sans-serif !important;
+				margin: 20px !important;
+			}
+
+			h1
+			{
+				/*font-size: 48px;*/
+				text-align:center;
+				margin-bottom: 15px;
+				margin-top:15px;
+			}
+
+			h4
+			{
+				font-variant-caps: petite-caps !important;
+				font-weight: 600 !important;
+				margin-top: 40px !important;
+				text-align: center;
+			}
+
+			h5
+			{
+				font-weight: 600 !important;
+			}
+
+			h6
+			{
+				font-style: oblique;
+			}
+
+			#oblique
+			{
+				font-style: oblique !important;
+			}
+
+			#name
+			{
+				text-align: center;
+				margin-bottom: 5px;
+				margin-top: -10px;
+			}
+
+			#spanS
+			{
+				font-size: 58px;
+			}
+
+			#spanC
+			{
+				font-size: 58px;
+			}
+
+			#shaun
+			{
+				color:#8A0707; ##red
+			}
+
+			#christian
+			{
+				color: #424242; ##gray
+			}
+
+			.redline
+			{
+				height: 2px;
+				width: 100%;
+				border: 0px;
+				margin-top:-5px;
+				text-align: left;
+				background-image: linear-gradient(to right, rgba(175, 17, 28, 0.1), rgba(175, 17, 28, 0.8), rgba(175, 17, 28, 0.1));
+			}
+
+			#graybox
+			{
+				display: block;
+				height: 10px;
+				width: 75%;
+				border: 0;
+				border-top: 30px solid #424242;
+				text-align: center;
+				opacity: 0.8;
+				margin-bottom:-10px;
+			}
+
+			#address
+			{
+				font-size: 12px;
+				text-align: center;
+				margin-top: -15px;
+				margin-bottom:50px;
+				opacity: 0.65;
+			}
+
+			li.skills
+			{
+				/*font-size:12px;*/
+				list-style-type:none;
+				float:left;
+				display:list-item;
+				padding:0px 10px;
+				text-align:justify;
+			}
+
+			ul
+			{
+				font-size: 12px;
+				text-align: justify;
+				overflow: hidden;
+			}
+
+			li
+			{
+				font-size: 12px;
+				list-style-type: bullet;/*chrome*/
+				list-style-type: disc; /*for Firefox*/
+				float:left;
+				display:list-item;
+				padding:0px 10px;
+				text-align:justify;
+			}
+
+			.education
+			{
+				font-size:12px;
+				text-align: center;
+			}
+
+			.no-bullet
+			{
+				list-style-type: none !important;
+				text-align: justify !important;
+			}
+
+			.extra-margin-10px
+			{
+				margin-left: 20px !important;
+			}
+
+			#references
+			{
+				text-align:center;
+			}
+			.currentInterests
+			{
+
+			}
+			.languages{}
+			.operatingSystems{}
+			.virtualization{}
+			.mainContent{}
+			.currentInterests{}
+			.experience{}
+			div.contentBlock
+			{
+				margin: 30px;
+			}
+			#certs
+			{
+				text-align:center;
+			}
+			.objective
+			{
+				text-align:center;
+			}
+		</style>
+	</head>
+
+
+	<body id="root">
+
+		<!--<hr id="graybox">-->
+
+		<h1 id="name">
+			<span id="shaun"><span id="spanS">S</span>HAUN</span><span id="christian"> <span id="spanC">C</span>HRISTIAN</span>
+		</h1>
+		<p id="address">
+			<strong>
+			    Jacksonville, FL | C: 850.999.9622 | schris.cybersec@gmail.com
+			</strong>
+		</p>
+		<div class="mainContent">
+		<div class="objective">
+		<h5>Objective:</h5>
+			<p>Obtain entry level employment as a Junior Cybersecurity Specialist.</p>
+		</div>
+		<!--SKILLS-->
+		<h4>
+			Skills & Interests
+		</h4>
+
+		<hr class="redline">
+		<div class="contentBlock">
+				<!--<div class="other">
+					<h5>Current Interests:</h5>
+					<ul>
+						<li>Network Monitoring, Cyber Security, DevSecOps, AWS, IAM, VPC, Self-healing networks, Automation, ELK Stack </li>
+					</ul>
+					<ul>
+						<li>Cloud Migration, OpsWorks, AI & Machine Learning for Cyber Security, AWS CLI, Docker, Chef, Selenium, NoSQL, Palo Alto</li>
+					</ul>
+
+				</div>-->
+				<div class="languages">
+				<h5>Languages:</h5>
+						<ul>
+							<li >Programming: Python, Java, C++, SQL (mySQL, sqlite)<!--PHP, Perl, C, Arduino--></li>
+						</ul>
+						<ul>
+							<li>Shell Scripting: bash, batch, powershell<!--, VBS, AutoIT Script--></li>
+						</ul>
+						<ul>
+							<li >Web Development: HTML, CSS, JavaScript<!--, jQuery--></li>
+						</ul>
+
+				</div>
+				<div class="operatingSystems">
+				<h5>Operating Systems:</h5>
+						<ul>
+							<li>CentOS, <!--RHEL, Amazon Linux,--> Kali, Backtrack, Fedora, Ubuntu, <!--  Solaris, FreeBSD(HardenedBSD)-->Android, OS X, iOS, </li>
+						</ul>
+						<ul>
+							<li>Windows XP, 7, 8.1, 10, Server 2008 R2, SBS 2011, Server 2012, Server 2016</li>
+						</ul>
+
+
+				</div>
+				<div class="virtualization">
+				<h5>Virtualization:</h5>
+					<ul>
+						<li>VMware ESXi/ Workstation/ Player, Oracle Virtualbox, qemu, Hyper-V</li>
+					</ul>
+				</div>
+				<div class="other">
+				<h5>Other:</h5>
+					<ul>
+						<li>Wireshark, Nmap/Zenmap, snort, iptables, hydra, john the ripper, crunch, Social Engineering Toolkit, aircrack-ng tools, Elastic Stack (Elasticsearch, Logstash, Kibana)</li>
+					</ul>
+					<!--<ul>
+						<li>Sublime Text, Kate, Vim, Notepad++, Scite, nano, SSH, git, github, WAMP, XAMPP, LAMP, WordPress,  Gimp, Adobe Creative Suite, Adobe PhoneGap</li>
+					</ul>-->
+
+
+					<!--<ul>
+						<li>IPv4, IPv6, DNS, DDNS, DHCP, NAT, IMAP4, POP3, SMTP, VPN, VNC, LAN, VLAN, WAN,  TCP/IP, OSI model</li>
+					</ul>-->
+
+				</div>
+		</div>
+		<div class="experience">
+		<h4>Experience</h4>
+
+		<hr class="redline">
+		<div class="contentBlock">
+				<h5>Personal Project</h5>
+					<h6>(2016-2017)</h6>
+					<ul>
+						<li>Developed Internet of Things (IoT) device for remote wireless penetration testing.</li>
+					</ul>
+					<ul>
+						<li>Utilized Raspberry Pi and Arduino to control an RC car remotely.</li>
+					</ul>
+					<ul>
+						<li>Implemented remote X application over secure shell with Arduino(C/C++), Java, and bash to control RC car.</li>
+					</ul>
+<!--
+					<ul>
+						<li>IoT, Rogue Rover, electronics, hardware.</li>
+					</ul>
+-->
+
+				<h5>Masterpiece Marbleworks, LLP</h5>
+					<h6>CTO/ Partner -- (2014-2015)</h6>
+					<ul>
+						<li>Web development, branding, and maintainence of digital presence, including: logos, social media, website/domain, email.</li>
+					</ul>
+					<ul>
+						<li>Implemented technical solutions<!-- (cloud and physical)--> to meet the needs of a small construction business on a shoestring budget.</li>
+					</ul>
+					<ul>
+						<li>Configured and managed networking devices for SOHO. (Desktops, laptops, smartphones, printers, router, wireless access point)</li>
+					</ul>
+
+					<ul>
+						<li>Trained other business partners to utilize technology to assist with business operations while evangelizing a security focused mindset.</li>
+					</ul>
+
+
+				<h5>Danfoss Turbocor, Inc.</h5>
+					<h6>R&amp;D Software Testing Intern -- (2013-2013)</h6>
+
+				<ul>
+					<li>Followed QA testing procedures assigned by software engineering team to assure software functionality.</li>
+				</ul>
+				<ul>
+					<li>Maintained logs to capture data regarding efficiency and functionality of embedded systems application.</li>
+				</ul>
+				<ul>
+					<li>Produced detailed reports based on test data to submit to software engineering.</li>
+				</ul>
+
+
+				<h5>Danfoss Turbocor, Inc.</h5>
+				      <h6>Production Test Technician -- (2011-2014)</h6>
+
+				<ul>
+					<li>Operated production test stand for unique embedded systems with HVAC&amp;R applications in time critical setting.</li>
+				</ul>
+				<ul>
+					<li>Maintained logs and assisted with developing playbooks for troubleshooting proprietary hardware and software.</li>
+				</ul>
+				<ul>
+					<li>Reported to engineering on trend analysis and quality assurance assisting with the establishment of refined processes.</li>
+				</ul>
+				<ul>
+					<li>Conducted critical final functionality testing for systems in a production manufacturing  environment prior to shipping to customers, in a highly competitive market.</li>
+				</ul>
+				<ul>
+					<li>Cross-trained and became proficient across entire production line within a year of employment, during 'free time,' after completing assigned work.
+					</li>
+				</ul>
+				<ul>
+					<li>Quickly established a reputation throughout company for raising leak test 'first pass yield' from a 50-60% average to 90-100% after years of issues, while following process.
+					</li>
+				</ul>
+
+			</div>
+		</div>
+		<!--CERTIFICATIONS-->
+			<h4>Certifications</h4>
+
+		<hr class="redline">
+
+			<ul id="certs">
+				<li class="no-bullet">
+					Associate of (ISC)<sup>2</sup>
+				</li>
+				<li class="no-bullet">
+					ITIL Foundation 2011
+				</li>
+				<li class="no-bullet">
+					CIW Site Development Associate
+				</li>
+				<li class="no-bullet">
+					CompTIA Secure Infrastructure Specialist
+				</li>
+				<li class="no-bullet">
+					CompTIA IT Operations Specialist
+				</li>
+				<li class="no-bullet">
+					EC-Council Certified Encryption Specialist
+				</li>
+				<li class="no-bullet">
+					CompTIA Network+
+				</li>
+				<li class="no-bullet">
+					CompTIA A+
+				</li>
+				<li class="no-bullet">
+					CompTIA Security+
+				</li>
+				<li class="no-bullet">
+					EC-Council Certified Incident Handler v1
+				</li>
+				<li class="no-bullet">
+					CIW Web Security Associate
+				</li>
+				<li class="no-bullet">
+					CompTIA Project+
+				</li>
+				<li class="no-bullet">
+					Cybrary Developing Ethical Hacking Tools with Python - Certificate of Completion
+				</li>
+				<li class="no-bullet">
+					Cybrary Social Engineering and Manipulation - Certificate of Completion
+				</li>
+				<li class="no-bullet">
+					Sololearn CSS Fundamentals - Certificate of Completion
+				</li>
+				<li class="no-bullet">
+					Sololearn HTML Fundamentals - Certificate of Completion
+				</li>
+				<li class="no-bullet">
+					Sololearn JavaScript Basics - Certificate of Completion
+				</li>
+				<li class="no-bullet">
+					Sololearn PHP Course - Certificate of Completion
+				</li>
+			</ul>
+
+
+
+
+		<!--EDUCATION & TRAINING-->
+		<div>
+
+		<h4>Education</h4>
+
+		<hr class="redline">
+
+			<div class="education">
+				<h5>
+					B.S. Cybersecurity and Information Assurance
+				</h5>
+				<p id="oblique">
+					Western Governors University
+				</p>
+				<!--<p id="oblique">Cyber Security Associate PSAV & CompTIA Security+ (In Progress)</p>-->
+				<!--<p id="oblique">CompTIA Security+ (In Progress)</p>-->
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>
