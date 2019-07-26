@@ -1,16 +1,3 @@
-<html>
- <!--apologies for the quick and dirty-->
-<head><title>Hello</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body
-    {
-      font-family: "Arial",sans-serif;
-    }
-  </style>
-<head>
-<body>
-<pre>
 Hello!
 
 I recently graduated from Western 
@@ -45,6 +32,3 @@ Have a great day!
 
 
 Shaun Christian
-</pre>
-</body>
-</html>
