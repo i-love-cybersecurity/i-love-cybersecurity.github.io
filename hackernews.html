@@ -1,0 +1,32 @@
+<code><pre>
+# get the first page of hacker news
+import requests
+from bs4 import BeautifulSoup as bs
+
+path = '/'
+q_string = ''        
+s = requests.Session()
+r = s.get(url='https://news.ycombinator.com' + path + q_string)
+
+soup = bs(r.text, 'html.parser')
+for link in soup.find_all('a'):
+    print(link.getText()) 
+
+print('\n')
+
+print('REQUEST')
+print(r.request.method, path, f'HTTP/1.1\nHost: ', r.request.url[8:-1])
+for i,j in r.request.headers.items():
+    print(i,': ',j)
+    
+print('\n')
+
+print('RESPONSE')
+print(r.status_code, r.reason)
+for k,v in r.headers.items():
+    print(k,': ',v)
+
+print('\n')
+print('Cookies: ', r.cookies)
+
+</pre></code>
