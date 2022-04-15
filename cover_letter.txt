@@ -1,9 +1,8 @@
 Hello!
 
-I recently graduated from Western 
-Governors University with a 
-Bachelor's in Cybersecurity. I'm 
-currently seeking an entry level/
+I recently graduated from university 
+with a Bachelor's in Cybersecurity. 
+I'm currently seeking an entry level/
 junior position as a Information
 Security/ Cybersecurity/ SOC Analyst.
 
@@ -30,5 +29,3 @@ excited to jumpstart my career.
 
 Have a great day!
 
-
-Shaun Christian
