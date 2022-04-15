@@ -15,11 +15,11 @@ def scan():
     up = []
     
     for i in track(range(1,255), description='Scanning...'):
-        ping = popen('ping -c 1 10.0.0.'+str(i)).read()
+        ping = popen('ping -c 1 192.168.0.'+str(i)).read()
         if '0 received,' in str(ping):
-            down.append('10.0.0.'+str(i))
+            down.append('192.168.0.'+str(i))
         if '1 received,' in str(ping):
-            up.append('10.0.0.'+str(i))
+            up.append('192.168.'+str(i))
             
     print('[+] Hosts up:\n')
     for host in up:
