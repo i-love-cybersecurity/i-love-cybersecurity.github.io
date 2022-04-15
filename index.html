@@ -1,32 +1,5 @@
-<h2>Google search</h2>
-<code><pre>
+<h1>Links:</h1>
+<a href='https://i-love-cybersecurity.github.io/index.html'>Home</a>
+<a href='https://i-love-cybersecurity.github.io/google.html'>Google search</a>
+<a href='https://i-love-cybersecurity.github.io/hackernews.html'>Hacker news feed</a>
 
-# search google
-import requests
-from bs4 import BeautifulSoup as bs
-
-path = '/search'
-q_string = '?q=google+atmospheric+water+generator'        
-s = requests.Session()
-r = s.get(url='https://google.com' + path + q_string)
-
-soup = bs(r.text, 'html.parser')
-for link in soup.find_all('a'):
-    print(link.getText(),'\n') 
-
-print('\n')
-
-print('REQUEST')
-print(r.request.method, path, f'HTTP/1.1\nHost: ', r.request.url[8:-1])
-for i,j in r.request.headers.items():
-    print(i,': ',j)
-    
-print('\n')
-
-print('RESPONSE')
-print(r.status_code, r.reason)
-for k,v in r.headers.items():
-    print(k,': ',v)
-
-print('\n')
-</pre></code>
