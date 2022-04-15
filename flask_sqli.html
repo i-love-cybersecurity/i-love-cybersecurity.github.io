@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+
+<body>
+<code><pre>
+
+from flask import Flask, request
+import sqlite3
+
+app = Flask(__name__)
+
+@app.route('/', methods = ['POST', 'GET'])
+def requestHandler():
+    if request.method == 'POST':
+        con = sqlite3.connect('app.db')
+        cur = con.cursor()
+        for row in cur.execute('SELECT name FROM users WHERE name='+'"'+str(request.form['username'])+'"'+' AND password='+'"'+str(request.form['password'])+'"'):
+            return '<h1>Hello '+str(row)[2:-3].title()+'</h1>'+ '''
+            <table border=1>
+                <tr><th>Account</th><th>Acct #</th><th>Balance</th></tr>
+                <tr><td>Checking</td><td>900003471</td><td>$9923.46</td></tr>
+                <tr><td>Saving</td><td>900003495</td><td>$0.31</td></tr>
+                </table>
+                <br>
+                <a href="/">Logout</a>
+            '''
+    if request.method == 'GET':
+        return '''
+        <h1>Login</h1><br>
+        <form method="post">
+            <input type=text name=username required="true">
+            <br>
+             <input type=password name=password required="true">
+            <input type=submit value=Login>
+        </form>'''
+        
+if __name__ == '__main__':
+    app.run(debug=True)
+
+</pre></code>
+</body>
+</html>
