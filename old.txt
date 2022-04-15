@@ -207,7 +207,7 @@
 		</h1>
 		<p id="address">
 			<strong>
-			    Jacksonville, FL | C: 850.999.9622 | schris.cybersec@gmail.com
+			    Location | Phone number | Email
 			</strong>
 		</p>
 		<div class="mainContent">
