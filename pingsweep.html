@@ -1,0 +1,23 @@
+<code><pre>
+#slow ping scan
+def scan():
+    from os import popen
+    from rich.progress import track
+    
+    down = []
+    up = []
+    
+    for i in track(range(1,255), description='Scanning...'):
+        ping = popen('ping -c 1 10.0.0.'+str(i)).read()
+        if '0 received,' in str(ping):
+            down.append('10.0.0.'+str(i))
+        if '1 received,' in str(ping):
+            up.append('10.0.0.'+str(i))
+            
+    print('[+] Hosts up:\n')
+    for host in up:
+        print('\U0001f5a5\uFE0F '+host)
+    
+scan()
+
+</pre></code>
