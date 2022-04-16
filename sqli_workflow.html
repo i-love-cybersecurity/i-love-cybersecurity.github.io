@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Links</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=0.75">
 </head>
 <body>
 <code><pre>
@@ -15,8 +15,10 @@ This script can be used to build sqli payloads.
 
 #This string reminds you of what the goal is so you dont get off track!
 #Make sure you add a goal!
-goal = "Blind SQL injection with conditional responses. Log in as administrator."
-#verify is set to false in the request, so it won't 
+goal = "Blind SQL injection with conditional responses.\
+Log in as administrator."
+#verify is set to false in the request, so it won't fail.
+
 burp_proxy = {
 	"https":"http://127.0.0.1:8080",
 	"http" :"http://127.0.0.1:8080"
@@ -52,8 +54,10 @@ payloads = [
 #SCRATCH PAD FOR BUILDING:
 # '+ORDER+BY+1'--
 
-#this provides a baseline for db interaction. this defines success and whether a query is valid.
-base_url = "https://target-ac201fe91fbd4f53801f0a8c000500be.web-security-academy.net/filter?category=Corporate+gifts"
+#this provides a baseline for db interaction. 
+this defines success and whether a query is valid.
+base_url = "https://target-ac201fe91fbd4f53801f0a8c000500be.web-security-academy.net/\
+filter?category=Corporate+gifts"
 
 #this is is where you set payloads to use from the payloads list
 current_payloads = [
