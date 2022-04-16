@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /supasecret
+
+User-agent: Googlebot
+Allow: *
+
+Sitemap: https://i-love-cybersecurity.github.io/sitemap.txt
